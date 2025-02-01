@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Hall Map | Exam Hall Organizer</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    /* Inline custom styles for hallmap demo; move to styles.css if preferred */
+    .hall-map {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 15px;
+      justify-items: center;
+      margin-top: 30px;
+    }
+    .seat {
+      width: 60px;
+      height: 60px;
+      background-color: #6c757d;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .seat.available:hover {
+      background-color: #28a745;
+    }
+    .seat.occupied {
+      background-color: #dc3545;
+      cursor: not-allowed;
+    }
+    .seat.selected {
+      background-color: #ffc107;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">Exam Hall Organizer</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('seating') }}">Seating</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('student') }}">Student</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('hallmap') }}">Hall Map</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('about') }}">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hall Map Section -->
+  <section class="py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">Interactive Exam Hall Map</h1>
+      <p class="text-center text-muted">Click on a seat to see details or check its status.</p>
+      
+      <!-- Hall Map Grid -->
+      <div class="hall-map">
+        <!-- Example seats in a 5-row x 6-column grid -->
+        <!-- You can generate these dynamically based on your data -->
+        <!-- Let's assume some seats are available and some are occupied -->
+        <!-- We'll use data attributes to store seat info -->
+        <!-- Row 1 -->
+        <button class="seat available" data-seat="1" onclick="showSeatInfo(this)">1</button>
+        <button class="seat occupied" data-seat="2" onclick="showSeatInfo(this)">2</button>
+        <button class="seat available" data-seat="3" onclick="showSeatInfo(this)">3</button>
+        <button class="seat available" data-seat="4" onclick="showSeatInfo(this)">4</button>
+        <button class="seat occupied" data-seat="5" onclick="showSeatInfo(this)">5</button>
+        <button class="seat available" data-seat="6" onclick="showSeatInfo(this)">6</button>
+        <!-- Row 2 -->
+        <button class="seat available" data-seat="7" onclick="showSeatInfo(this)">7</button>
+        <button class="seat available" data-seat="8" onclick="showSeatInfo(this)">8</button>
+        <button class="seat occupied" data-seat="9" onclick="showSeatInfo(this)">9</button>
+        <button class="seat available" data-seat="10" onclick="showSeatInfo(this)">10</button>
+        <button class="seat available" data-seat="11" onclick="showSeatInfo(this)">11</button>
+        <button class="seat occupied" data-seat="12" onclick="showSeatInfo(this)">12</button>
+        <!-- Row 3 -->
+        <button class="seat available" data-seat="13" onclick="showSeatInfo(this)">13</button>
+        <button class="seat available" data-seat="14" onclick="showSeatInfo(this)">14</button>
+        <button class="seat available" data-seat="15" onclick="showSeatInfo(this)">15</button>
+        <button class="seat occupied" data-seat="16" onclick="showSeatInfo(this)">16</button>
+        <button class="seat available" data-seat="17" onclick="showSeatInfo(this)">17</button>
+        <button class="seat available" data-seat="18" onclick="showSeatInfo(this)">18</button>
+        <!-- Row 4 -->
+        <button class="seat available" data-seat="19" onclick="showSeatInfo(this)">19</button>
+        <button class="seat occupied" data-seat="20" onclick="showSeatInfo(this)">20</button>
+        <button class="seat available" data-seat="21" onclick="showSeatInfo(this)">21</button>
+        <button class="seat available" data-seat="22" onclick="showSeatInfo(this)">22</button>
+        <button class="seat available" data-seat="23" onclick="showSeatInfo(this)">23</button>
+        <button class="seat occupied" data-seat="24" onclick="showSeatInfo(this)">24</button>
+        <!-- Row 5 -->
+        <button class="seat available" data-seat="25" onclick="showSeatInfo(this)">25</button>
+        <button class="seat available" data-seat="26" onclick="showSeatInfo(this)">26</button>
+        <button class="seat occupied" data-seat="27" onclick="showSeatInfo(this)">27</button>
+        <button class="seat available" data-seat="28" onclick="showSeatInfo(this)">28</button>
+        <button class="seat available" data-seat="29" onclick="showSeatInfo(this)">29</button>
+        <button class="seat available" data-seat="30" onclick="showSeatInfo(this)">30</button>
+      </div>
+      
+      <!-- Seat Details Modal Trigger (for demo purposes) -->
+      <div class="mt-5 text-center" id="seatDetailDisplay" style="display: none;">
+        <h4>Seat Details</h4>
+        <p id="seatDetailText"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Exam Hall Organizer</h5>
+          <p>&copy; 2025 Exam Hall Organizer. All Rights Reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <ul class="list-unstyled d-inline-flex">
+            <li class="ms-3"><a class="text-white" href="#">Privacy</a></li>
+            <li class="ms-3"><a class="text-white" href="#">Terms</a></li>
+            <li class="ms-3"><a class="text-white" href="{{ url_for('about') }}">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  
+  <!-- Inline Script for Interactive Hall Map -->
+  <script>
+    function showSeatInfo(button) {
+      // Prevent any action if the seat is occupied (optional behavior)
+      if (button.classList.contains('occupied')) {
+        alert('This seat is already occupied.');
+        return;
+      }
+      
+      // Toggle selection
+      const alreadySelected = button.classList.contains('selected');
+      document.querySelectorAll('.seat').forEach(seat => seat.classList.remove('selected'));
+      
+      if (!alreadySelected) {
+        button.classList.add('selected');
+        const seatNumber = button.getAttribute('data-seat');
+        // Example seat details; in a real app, this data could be fetched from your backend
+        const seatInfo = `Seat Number: ${seatNumber}<br>
+                          Status: ${button.classList.contains('occupied') ? 'Occupied' : 'Available'}<br>
+                          (Additional details can go here.)`;
+        document.getElementById('seatDetailText').innerHTML = seatInfo;
+        document.getElementById('seatDetailDisplay').style.display = 'block';
+      } else {
+        // If deselected, hide the details
+        document.getElementById('seatDetailDisplay').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
