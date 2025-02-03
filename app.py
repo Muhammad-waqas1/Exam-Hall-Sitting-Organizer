@@ -2,8 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os
 import csv
 import io
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///StudentSeating.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
 
 # Global variable to store seating data.
@@ -11,8 +17,20 @@ app.secret_key = 'your_secret_key_here'  # Replace with a strong secret key
 seating_data = []
 
 # Dummy admin credentials (update as needed)
-ADMIN_EMAIL = 'awesomemayer@tomorjerry.com'
-ADMIN_PASSWORD = 'admin909'
+ADMIN_EMAIL = ''
+ADMIN_PASSWORD = ''
+
+
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Seat = db.Column(db.String(10), unique=True, nullable=False)
+    fname = db.Column(db.String(50), nullable=False)
+    lname = db.Column(db.String(50), nullable=False)
+    RollNo = db.Column(db.String(50), nullable=False)
+    HallNo = db.Column(db.String(10), nullable=False)
+
+    def __repr__(self) -> str:
+        return f"{self.Seat} - {self.fname} - {self.lname} - {self.RollNo} - {self.HallNo}"
 
 # --------------------------
 # ROUTES
@@ -24,9 +42,9 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/student')
-def student():
-    return render_template('student.html')
+# @app.route('/student')
+# def student():
+#     return render_template('student.html')
 
 @app.route('/hallmap')
 def hallmap():
@@ -66,60 +84,72 @@ def admin_dashboard():
     return render_template('admin.html')
 
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    """
-    Handle CSV file upload to process seating data.
-    Expects a CSV file with at least the following columns: student_name, roll_number, exam_hall.
-    """
-    if not session.get('admin_logged_in'):
-        flash('Please login first.', 'warning')
-        return redirect(url_for('admin'))
+# @app.route('/upload', methods=['POST'])
+# def upload():
+#     """
+#     Handle CSV file upload to process seating data.
+#     Expects a CSV file with at least the following columns: student_name, roll_number, exam_hall.
+#     """
+#     if not session.get('admin_logged_in'):
+#         flash('Please login first.', 'warning')
+#         return redirect(url_for('admin'))
 
-    if 'csv_file' not in request.files:
-        flash('No file part in the request.', 'danger')
-        return redirect(url_for('admin'))
+#     if 'csv_file' not in request.files:
+#         flash('No file part in the request.', 'danger')
+#         return redirect(url_for('admin'))
     
-    file = request.files['csv_file']
-    if file.filename == '':
-        flash('No file selected for uploading.', 'danger')
-        return redirect(url_for('admin'))
+#     file = request.files['csv_file']
+#     if file.filename == '':
+#         flash('No file selected for uploading.', 'danger')
+#         return redirect(url_for('admin'))
 
-    try:
-        stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-        csv_input = csv.DictReader(stream)
-        global seating_data
-        seating_data = []  # Reset any existing data
-        seat_no = 1
-        for row in csv_input:
-            seating_data.append({
-                'seat_no': seat_no,
-                'student_name': row.get('student_name', 'N/A'),
-                'roll_number': row.get('roll_number', 'N/A'),
-                'exam_hall': row.get('exam_hall', 'N/A')
-            })
-            seat_no += 1
-        flash('CSV file uploaded and seating data processed successfully.', 'success')
-    except Exception as e:
-        flash(f'Error processing file: {e}', 'danger')
+#     try:
+#         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+#         csv_input = csv.DictReader(stream)
+#         global seating_data
+#         seating_data = []  # Reset any existing data
+#         seat_no = 1
+#         for row in csv_input:
+#             seating_data.append({
+#                 'seat_no': seat_no,
+#                 'student_name': row.get('student_name', 'N/A'),
+#                 'roll_number': row.get('roll_number', 'N/A'),
+#                 'exam_hall': row.get('exam_hall', 'N/A')
+#             })
+#             seat_no += 1
+#         flash('CSV file uploaded and seating data processed successfully.', 'success')
+#     except Exception as e:
+#         flash(f'Error processing file: {e}', 'danger')
     
-    return redirect(url_for('seating'))
+#     return redirect(url_for('seating'))
 
 
-@app.route('/generate-seating')
-def generate_seating():
+@app.route('/add-student', methods=['POST'])
+def addingstudent():
     """
     Trigger seating plan generation.
     (For now, we assume that the seating plan is created as soon as CSV data is processed.
     This endpoint can later incorporate more complex seating algorithms.)
     """
-    if not seating_data:
-        flash('No seating data available. Please upload a CSV first.', 'warning')
-        return redirect(url_for('admin'))
-    
-    # Implement any additional logic for generating or rearranging the seating plan here.
-    flash('Seating plan generated successfully.', 'success')
-    return redirect(url_for('seating'))
+    Seat = request.form['Seat']
+    fname = request.form['fname']
+    lname = request.form['lname']
+    RollNo = request.form['RollNo']
+    HallNo = request.form['HallNo']
+
+    # Check if the seat is already occupied
+    existing_seat = Todo.query.filter_by(Seat=Seat).first()
+
+    if existing_seat:
+        flash(f'Seat No. {seat_no} is already occupied! Please choose another seat.', 'danger')
+        return redirect(url_for('seating'))  # 
+
+    StudentSeating = Todo(Seat=Seat, fname=fname, lname=lname, RollNo=RollNo, HallNo=HallNo)
+    db.session.add(StudentSeating)
+    db.session.commit()
+
+    flash('Student added successfully!', 'success')
+    return redirect(url_for('admin'))
 
 
 @app.route('/seating')

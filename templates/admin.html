@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin Dashboard | Exam Hall Organizer</title>
   <!-- Bootstrap CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="{{ url_for('index') }}">Exam Hall Organizer</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -30,9 +35,6 @@
             <a class="nav-link" href="{{ url_for('seating') }}">Seating</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('student') }}">Student</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="{{ url_for('hallmap') }}">Hall Map</a>
           </li>
           <li class="nav-item">
@@ -43,41 +45,80 @@
     </div>
   </nav>
 
-  <!-- Admin Dashboard Section -->
+
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="container mt-3">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+
+
+  <!-- Adding Section -->
   <section class="py-5">
-    <div class="container">
-      <h1 class="mb-4 text-center">Admin Dashboard</h1>
-      
-      <!-- Optional Login Form -->
-      <div class="row justify-content-center mb-5">
-        <div class="col-md-6">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Admin Login</h5>
-              <form action="{{ url_for('admin')}}" method="POST">
-                <div class="mb-3">
-                  <label for="adminEmail" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="adminEmail" name="email" placeholder="admin@example.com" required>
-                </div>
-                <div class="mb-3">
-                  <label for="adminPassword" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="adminPassword" name="password" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-              </form>
-            </div>
+    <div class="container px-5">
+      <h1 class="mb-4 text-center">Adding Students for Exam</h1>
+      <h5 class="mb-4 text-center"><i>Fill out all of the input fields</i></h5>
+      <form action="{{ url_for('addingstudent')}}" method="POST">
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Seat No.</label><span class="req"> *</span>
+          <input class="form-control" type="Number" placeholder="Enter Seat Number" name="Seat" id="Seat"
+            aria-label="default input example" required>
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Student Name</label><span class="req"> *</span>
+          <div class="input-group">
+            <!-- <span class="input-group-text">First and last name</span> -->
+            <input type="text" placeholder="Enter First Name" name="fname" id="fname" aria-label="default input example"
+              required class="form-control">
+            <input type="text" placeholder="Enter Last Name" name="lname" id="lname" aria-label="default input example"
+              required class="form-control">
           </div>
         </div>
-      </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Roll Number</label><span class="req"> *</span>
+          <input class="form-control" type="Number" placeholder="Enter Roll Number" name="RollNo" id="RollNo"
+            aria-label="default input example" required>
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Exam Hall</label><span class="req"> *</span>
+          <input class="form-control" type="text" list="datalistOptions" placeholder="Enter Exam Hall" name="HallNo"
+            id="HallNo" aria-label="default input example" required>
+          <datalist id="datalistOptions">
+            <option value="A">
+            <option value="B">
+            <option value="C">
+            <option value="D">
+          </datalist>
+        </div>
+
+        <div class="row mt-1">
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-warning btn-lg" data-bs-toggle="tooltip" data-bs-placement="right"
+              data-bs-title="Generate Seating Plan">
+              Submit
+            </button>
+          </div>
+        </div>
+
+      </form>
 
       <!-- CSV Upload Section -->
-      <div class="row justify-content-center">
+      <!-- <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title">Upload Seating Data</h5>
               <p class="card-text">Upload a CSV file containing the student list and exam hall details.</p>
-              <form action="{{ url_for('upload')}}" method="POST" enctype="multipart/form-data">
+              <form action="  " method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                   <input class="form-control" type="file" name="csv_file" accept=".csv" required>
                 </div>
@@ -86,16 +127,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <!-- Generate Seating Plan Section -->
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8 text-center">
-          <h5>Generate Seating Plan</h5>
-          <p class="mb-4">After uploading the CSV file, click below to generate the seating arrangement.</p>
-          <a href="{{ url_for('generate_seating')}}" class="btn btn-warning btn-lg">Generate Seating</a>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -123,4 +156,5 @@
   <!-- Custom JS -->
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>

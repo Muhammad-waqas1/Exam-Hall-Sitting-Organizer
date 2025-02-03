@@ -1,2 +1,12 @@
 # Virtual environment
 venv
+
+__pycache__
+
+instance
+
+# static/images/member1.png
+# static/images/member1.png
+# static/images/member1.png
+
+Data.csv

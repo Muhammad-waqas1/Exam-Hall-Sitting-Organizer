@@ -30,9 +30,6 @@
             <a class="nav-link" href="{{ url_for('seating') }}">Seating</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('student') }}">Student</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="{{ url_for('hallmap') }}">Hall Map</a>
           </li>
           <li class="nav-item">
@@ -54,7 +51,7 @@
         </div>
         <div class="col-md-6">
           <!-- Ensure you have the image "exam_hall.svg" in static/images/ -->
-          <img src="{{ url_for('static', filename='images/Exam_Hall_Illustration.jpg') }}" alt="Exam Hall Illustration" class="img-fluid" style="border-top-left-radius: 60px; ">
+          <img src="{{ url_for('static', filename='images/Exam_Hall_Illustration.jpg') }}" alt="Exam Hall Illustration" class="img-fluid HomeImg" style="border-top-left-radius: 60px; ">
         </div>
       </div>
     </div>
@@ -101,7 +98,7 @@
     <div class="container text-center">
       <h2>Ready to streamline your exam seating?</h2>
       <p>Experience hassle-free seating management with our powerful tool.</p>
-      <a href="{{ url_for('admin') }}" class="btn btn-light btn-lg">Admin Login</a>
+      <a href="{{ url_for('admin') }}" class="btn btn-light btn-lg">Add Students</a>
     </div>
   </section>
 
