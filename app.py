@@ -141,7 +141,7 @@ def addingstudent():
     existing_seat = Todo.query.filter_by(Seat=Seat).first()
 
     if existing_seat:
-        flash(f'Seat No. {seat_no} is already occupied! Please choose another seat.', 'danger')
+        flash(f'Seat No. {Seat} is already occupied! Please choose another seat.', 'danger')
         return redirect(url_for('seating'))  # 
 
     StudentSeating = Todo(Seat=Seat, fname=fname, lname=lname, RollNo=RollNo, HallNo=HallNo)
